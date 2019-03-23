@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  // dataUrl: 'http://localhost:3000',
+  mlUrl: 'http://35.207.12.149:8000/api',
+  dataUrl: 'https://stg-vms.herokuapp.com'
 };
 
 /*
