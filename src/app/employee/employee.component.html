@@ -56,18 +56,18 @@
               </td>
               <td class="visitor-detail">
                 <mat-form-field>
-                  <input matInput placeholder="Relation" [value]="dependent.relation" name="name" required>
+                  <input matInput placeholder="Relation" [value]="dependent.relation" name="relation" (change)="addData(i, 'relation', $event)" [disabled]="accessType.value !== 'FAMILY'" required>
                 </mat-form-field>
               </td>
               <td class="visitor-detail">
                 <mat-form-field>
-                  <input matInput placeholder="Email" [value]="dependent.email" required>
+                  <input matInput placeholder="Email" [value]="dependent.email" (change)="addData(i, 'email', $event)" required>
                   <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
                 </mat-form-field>
               </td>
               <td class="visitor-detail">
                 <mat-form-field>
-                  <input matInput placeholder="Mobile" [value]="dependent.mobile" name="mobile" required>
+                  <input matInput placeholder="Mobile" [value]="dependent.mobile" (change)="addData(i, 'mobile', $event)" name="mobile" required>
                 </mat-form-field>
 
               </td>

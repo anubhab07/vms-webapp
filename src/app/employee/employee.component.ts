@@ -47,7 +47,8 @@ export class EmployeeComponent implements OnInit {
     this.existingDependentsLst.forEach(visitor => {
       visitor.photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + visitor.photo);
     });
-    this.dependentsLst.push(this.visitor);
+    // this.dependentsLst.push(this.visitor);
+    this.initializeVisitorLst();
   }
 
   getEmailErrorMessage() {
@@ -131,13 +132,14 @@ export class EmployeeComponent implements OnInit {
 
   submitRequest() {
     const visitorPayloadLst = [];
+    this.ngxLoader.start();
     this.dependentsLst.forEach(dependent => {
       const visitorPayload = {
         Name: dependent.name,
         Email: dependent.email,
-        Photo: dependent.photoId,
+        Photo: 1,
         Mobile: dependent.mobile,
-        VisitorType: this.selectedVisitorType,
+        VisitorType: this.accessType.value,
         Reffered: this.userDetails.userId,
         IN: dependent.inTime,
         OUT: dependent.outTime
@@ -147,14 +149,26 @@ export class EmployeeComponent implements OnInit {
     });
     console.log(visitorPayloadLst);
 
-    // this.empService.requestVisitorAccess(visitorPayloadLst)
-    //   .subscribe((response: IResponse) => {
-    //     if (response.status === 1) {
-    //       alert(response.message);
-    //     }
-    //     // this.imageSource = this._sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'
-    //     // + response['data']['Photo']);
-    //     alert(response['message']);
-    //   });
+    this.empService.requestVisitorAccess(visitorPayloadLst)
+      .subscribe((response: IResponse) => {
+        if (response.status === 1) {
+          alert(response.data[0].message);
+        }
+        console.log(response);
+        // this.imageSource = this._sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'
+        // + response['data']['Photo']);
+        this.ngxLoader.stop();
+        this.initializeVisitorLst();
+        alert(response['message']);
+      }, error => {
+        this.ngxLoader.stop();
+        alert('Sorry some error occured');
+        console.log(error);
+      });
+  }
+  initializeVisitorLst() {
+    this.dependentsLst = [];
+    const newVisitor = new Visitor();
+    this.dependentsLst.push(newVisitor);
   }
 }

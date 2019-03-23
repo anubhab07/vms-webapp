@@ -51,13 +51,18 @@ export class LoginComponent implements OnInit {
           this.storageService.userDetails = loginRes.data;
           this.cookieService.set('token', loginRes.data.token);
           this.ngxLoader.stop();
-          this.routerObj.navigateByUrl('/employee');
+          if (loginRes.data.userRole === 'EMPLOYEE'){
+            this.routerObj.navigateByUrl('/employee');
+          } else if (loginRes.data.userRole === 'SEC_ADM') {
+            this.routerObj.navigateByUrl('/security');
+          }
         } else {
           this.ngxLoader.stop();
           alert('Invalid Password');
         }
       }, error => {
         this.ngxLoader.stop();
+        console.log(error);
         alert('Some error Occured');
       });
     }
