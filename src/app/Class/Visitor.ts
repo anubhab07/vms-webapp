@@ -4,8 +4,9 @@ export class Visitor {
     email = '';
     mobile = '';
     relation = '';
-    inTime?: string;
-    outTime?: string;
+    reffered: '';
+    inTime: object = null;
+    outTime: object = null;
     photo: any;
     photoId?: number;
 }

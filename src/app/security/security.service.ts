@@ -39,5 +39,15 @@ export class SecurityService {
     return this.http.get(environment.dataUrl + '/web/getApprovedVisitorsToday', httpOptions);
   }
 
+  validateImageBase64(filePayload) {
+
+    const httpOptions = {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+        .set('access-token', this.cookieService.get('token'))
+    };
+
+    return this.http.post(environment.mlUrl + '/upload-photo-b64', filePayload, httpOptions);
+  }
+
 
 }

@@ -10,6 +10,7 @@ import { IUserRes } from '../Class/IUserRes';
 import { IVisitorTypeAccess } from '../Class/IVisitorTypeAccess';
 import { IResponse } from '../Class/IResponse';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { IResponseImgVerify } from '../Class/IResponseImgVerify';
 
 
 @Component({
@@ -73,9 +74,6 @@ export class EmployeeComponent implements OnInit {
   // }
 
   uploadImage(event, index) {
-    // alert('t');
-    // console.log(event);
-    // console.log(event.target.files[0]);
     const imgFile = event.target.files[0];
     this.validateFile(imgFile, index);
   }
@@ -101,12 +99,12 @@ export class EmployeeComponent implements OnInit {
       };
 
       this.empService.validateImageBase64(filePayload)
-        .subscribe((response) => {
+        .subscribe((response: IResponseImgVerify) => {
           console.log(response);
           // this.photoId = response['image_id'];
           // self.showSpinner = false;
-          this.dependentsLst[index].photoId = response['image_id'];
-          this.dependentsLst[index].photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + response['image_text']);
+          this.dependentsLst[index].photoId = response.image_id;
+          this.dependentsLst[index].photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + response.image_text);
           // this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + visitor.photo);
           // alert('Image Validation successful');
           console.log('Image Validation successful');
@@ -159,7 +157,7 @@ export class EmployeeComponent implements OnInit {
         // + response['data']['Photo']);
         this.ngxLoader.stop();
         this.initializeVisitorLst();
-        alert(response['message']);
+        // alert(response.message);
       }, error => {
         this.ngxLoader.stop();
         alert('Sorry some error occured');

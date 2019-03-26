@@ -20,13 +20,14 @@ export class LoginComponent implements OnInit {
   email = new FormControl('', [Validators.required, Validators.email]);
   pass = new FormControl('', [Validators.required]);
 
-  constructor(private loginService: LoginService, 
+  constructor(private loginService: LoginService,
               private storageService: StorageService,
               private cookieService: CookieService,
               private routerObj: Router,
               private ngxLoader: NgxUiLoaderService) { }
 
   ngOnInit() {
+    localStorage.clear();
   }
 
   getEmailErrorMessage() {
@@ -51,7 +52,8 @@ export class LoginComponent implements OnInit {
           this.storageService.userDetails = loginRes.data;
           this.cookieService.set('token', loginRes.data.token);
           this.ngxLoader.stop();
-          if (loginRes.data.userRole === 'EMPLOYEE'){
+          localStorage.setItem('userData', JSON.stringify(loginRes.data));
+          if (loginRes.data.userRole === 'EMPLOYEE') {
             this.routerObj.navigateByUrl('/employee');
           } else if (loginRes.data.userRole === 'SEC_ADM') {
             this.routerObj.navigateByUrl('/security');
