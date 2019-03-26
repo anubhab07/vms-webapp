@@ -41,7 +41,11 @@ export class EmployeeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userDetails = this.storageService.userDetails;
+    if (!this.storageService.userDetails) {
+      this.userDetails = JSON.parse(localStorage.getItem('userData'));
+    } else {
+      this.userDetails = this.storageService.userDetails;
+    }
     this.visitorTypeAccess = this.userDetails.visitorTypeAccess;
     this.accessType.setValue(this.visitorTypeAccess[0].typeCode);
     this.existingDependentsLst = this.userDetails.employeeFamily;

@@ -32,12 +32,12 @@ export class SecurityComponent implements OnInit {
   photoUploadError = false;
 
   constructor(private securityService: SecurityService,
-    private storageService: StorageService,
-    private sanitizer: DomSanitizer,
-    private ngxLoader: NgxUiLoaderService) { }
+              private storageService: StorageService,
+              private sanitizer: DomSanitizer,
+              private ngxLoader: NgxUiLoaderService) { }
 
   ngOnInit() {
-    console.log(this.photo)
+    // console.log(this.photo);
     if (!this.storageService.userDetails) {
       this.userDetails = JSON.parse(localStorage.getItem('userData'));
     } else {
