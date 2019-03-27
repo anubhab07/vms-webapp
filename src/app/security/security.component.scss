@@ -1,3 +1,11 @@
+.employee-container {
+  position: absolute;
+  // margin-top: 160px;
+  top: 51%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .employee-card {
   width: 920px;
   height: 70vh;
@@ -96,14 +104,6 @@
   overflow-y: auto;
 }
 
-.employee-container {
-  position: absolute;
-  margin-top: 160px;
-  top: 160px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .visitor-detail {
   padding-left: 10px;
   width: 150px;
@@ -117,4 +117,17 @@
   width: 400px;
   float: right;
   right: 0px;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+.search-icon{
+	cursor: pointer;
+	margin-top:3px;
 }

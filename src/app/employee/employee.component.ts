@@ -139,7 +139,7 @@ export class EmployeeComponent implements OnInit {
       const visitorPayload = {
         Name: dependent.name,
         Email: dependent.email,
-        Photo: 1,
+        Photo: dependent.photoId,
         Mobile: dependent.mobile,
         VisitorType: this.accessType.value,
         Reffered: this.userDetails.userId,

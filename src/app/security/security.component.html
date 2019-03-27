@@ -1,7 +1,7 @@
 <div class="employee-container">
   <mat-card class="header-card">
     <mat-card-content>
-      <mat-card-title class="card-header">Visitor Details {{documentEditForm.form.valid | json}}
+      <mat-card-title class="card-header">Visitor Details
         <button mat-raised-button style="float:right" form="ngForm" [disabled]="!documentEditForm.form.valid">Save</button>
       </mat-card-title>
     </mat-card-content>
@@ -11,7 +11,7 @@
       <mat-card-title style="margin-left: -16px">Visitor Details</mat-card-title>
   
     </mat-card-header> -->
-    <form name="fff" id="ngForm" (ngSubmit)="submitRequest()" #documentEditForm="ngForm">
+    <form  id="ngForm" (ngSubmit)="submitRequest()" #documentEditForm="ngForm">
       <mat-card-content class="input-items">
         <!-- <mat-form-field>
         <input matInput placeholder="Name" [(ngModel)]="visitor.name" name="name" required>
@@ -26,11 +26,19 @@
             <td>
               <mat-form-field>
                 <mat-label>Visitor Type</mat-label>
-                <mat-select [formControl]="accessType">
-                  <mat-option *ngFor="let access of visitorTypeAccess" [value]="access.typeCode">{{access.typeDesc}}</mat-option>
+                <mat-select [formControl]="accessType"  [(ngModel)]="selectedAccessType" (selectionChange)="visitorAccessChange($event)">
+                  <mat-option *ngFor="let access of visitorTypeAccess" [value]="access.typeCode" >{{access.typeDesc}}</mat-option>
                 </mat-select>
               </mat-form-field>
             </td>
+            <td *ngIf="isVisitorEmployee">
+                <mat-form-field style="margin-top: 3px;">
+                  <input matInput placeholder="Employee Id" type="number" [formControl]="empId" name="empId" (change)="empIdEntered($event)" maxlength="10"
+                  required>
+                  <mat-icon matSuffix (click)="getEmployeeDetails()" class="search-icon">search</mat-icon>
+                  <mat-error *ngIf="empId.invalid">{{getEmpIdErrorMessage()}}</mat-error>
+                </mat-form-field>
+              </td>
             <!-- <td>
                 <mat-form-field>
                   <mat-label>Existing Dependents</mat-label>
@@ -41,7 +49,7 @@
               </td> -->
           </tr>
         </table>
-        <table>
+        <table *ngIf="(isEmployeeDetailsFetched && isVisitorEmployee)|| !isVisitorEmployee">
           <!-- <tbody *ngFor="let dependent of dependentsLst; let i = index" [attr.data-index]="i"> -->
           <tr>
             <!-- <td rowspan="2">{{i+1}}.</td> -->
@@ -57,12 +65,12 @@
                   <mat-error *ngIf="name.invalid">{{getNameErrorMessage()}}</mat-error>
               </mat-form-field>
             </td>
-            <td class="visitor-detail">
+            <td class="visitor-detail" *ngIf="!isVisitorEmployee">
               <mat-form-field>
-                <input matInput placeholder="Reffered By" type="number" [formControl]="reffered" name="reffered" (change)="addData('reffered', $event)"
+                <input matInput placeholder="Reffered By" type="number" [formControl]="reffered" name="reffered" (change)="addData('reffered', $event)" [value]="newVisitor.reffered"  [disabled]="isVisitorEmployee"
                    required>
                    <mat-error *ngIf="reffered.invalid">{{getRefferedErrorMessage()}}</mat-error>
-              </mat-form-field>
+              </mat-form-field>{{isVisitorEmployee}}
             </td>
             <td class="visitor-detail">
               <mat-form-field>
@@ -142,7 +150,7 @@
       <span>
         <img class="visitor-img-upload" src="assets/images/visitor-img.png" alt="visitor_img">
         <span class="click-to-upload">Click to upload</span>
-        <input type="file" name="fileTest" id="file" [formControl]="photo" class="inputfile" accept="image/png, image/jpeg" (change)="uploadImage($event)"></span>
+        <input type="file" name="fileTest" id="file" class="inputfile" accept="image/png, image/jpeg" (change)="uploadImage($event)"></span>
       </label>
       <mat-error *ngIf="photoUploadError" style="font-size: x-small; ">{{getPhotoErrorMessage()}}</mat-error>
     <!-- </mat-form-field> -->

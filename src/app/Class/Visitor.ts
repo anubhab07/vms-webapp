@@ -5,8 +5,9 @@ export class Visitor {
     mobile = '';
     relation = '';
     reffered: '';
-    inTime: object = null;
+    inTime: any = null;
     outTime: object = null;
     photo: any;
     photoId?: number;
+    enteredEmpId?: number;
 }

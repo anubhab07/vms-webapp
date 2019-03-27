@@ -10,7 +10,7 @@ import { IVisitorTypeAccess } from '../Class/IVisitorTypeAccess';
 import { IResponse } from '../Class/IResponse';
 import { IResponseImgVerify } from '../Class/IResponseImgVerify';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-
+import * as moment from 'moment/moment';
 @Component({
   selector: 'app-security',
   templateUrl: './security.component.html',
@@ -29,7 +29,11 @@ export class SecurityComponent implements OnInit {
   reffered = new FormControl('', [Validators.required]);
   inTime = new FormControl('', [Validators.required]);
   outTime = new FormControl('', [Validators.required]);
+  empId = new FormControl('', [Validators.required]);
   photoUploadError = false;
+  selectedAccessType = '';
+  isVisitorEmployee = false;
+  isEmployeeDetailsFetched = false;
 
   constructor(private securityService: SecurityService,
               private storageService: StorageService,
@@ -145,6 +149,46 @@ export class SecurityComponent implements OnInit {
     }
   }
 
+  empIdEntered(event) {
+    console.log(event);
+    this.newVisitor.enteredEmpId = event.target.value;
+  }
+  getEmployeeDetails() {
+    if (this.newVisitor.enteredEmpId) {
+      this.ngxLoader.start();
+      this.securityService.fetchEmployeeDetails(this.newVisitor.enteredEmpId).subscribe((empRes) => {
+        console.log(empRes);
+        this.newVisitor.name = empRes.name;
+        this.newVisitor.email = empRes.email;
+        this.newVisitor.mobile = empRes.mobile;
+        this.newVisitor.reffered = empRes.empId;
+        this.newVisitor.photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + empRes.photo);
+        this.newVisitor.photoId = empRes.photoId;
+        this.newVisitor.inTime = new Date();
+        this.ngxLoader.stop();
+        this.isEmployeeDetailsFetched = true;
+      }, error => {
+        this.isEmployeeDetailsFetched = false;
+        this.ngxLoader.stop();
+      });
+    }
+  }
+
+  visitorAccessChange(event) {
+    console.log(event.source.value);
+    const vType = event.source.value;
+    if (vType === 'EMPLOYEE' || vType === 'FAMILY') {
+      this.isVisitorEmployee = true;
+      this.isEmployeeDetailsFetched = false;
+    } else {
+      this.isVisitorEmployee = false;
+      this.isEmployeeDetailsFetched  = true;
+    }
+  }
+
+  getEmpIdErrorMessage() {
+    return this.empId.hasError('required') ? 'Employee Id cannot be empty' : '';
+  }
   getEmailErrorMessage() {
     return this.email.hasError('required') ? 'Email cannot be empty' :
       this.email.hasError('email') ? 'Not a valid email' : '';

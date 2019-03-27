@@ -12,13 +12,13 @@ export class SecurityService {
 
   constructor(private http: HttpClient, private cookieService: CookieService) { }
 
-  fetchEmployeeDetails(empPayload) {
-    const httpOptions = {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-        .set('access-token', this.cookieService.get('token'))
-    };
+  fetchEmployeeDetails(empId) {
+    // const httpOptions = {
+    //   headers: new HttpHeaders().set('Content-Type', 'application/json')
+    //     .set('access-token', this.cookieService.get('token'))
+    // };
 
-    return this.http.post(environment.dataUrl + '/mobile/fetchEmployeeDetails', empPayload, httpOptions);
+    return this.http.get(environment.dataUrl + '/web/employee/' + empId);
   }
 
   requestGuestAccess(visitorPayload) {
