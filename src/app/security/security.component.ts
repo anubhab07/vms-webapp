@@ -114,7 +114,7 @@ export class SecurityComponent implements OnInit {
       const visitorPayload = {
         Name: this.newVisitor.name,
         Email: this.newVisitor.email,
-        Photo: this.newVisitor.photo,
+        Photo: this.newVisitor.photoId,
         Mobile: this.newVisitor.mobile,
         VisitorType: this.accessType.value,
         Reffered: this.newVisitor.reffered,
