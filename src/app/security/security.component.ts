@@ -281,7 +281,7 @@ export class DialogOverviewExampleDialog {
   }
 
   handleImage(webcamImage) {
-    console.log('received webcam image', webcamImage);
+    // console.log('received webcam image', webcamImage);
     // console.log(webcamImage)
     this.webcamImage = webcamImage;
     this.data.webCamPic = webcamImage;
