@@ -10,7 +10,8 @@ import { IVisitorTypeAccess } from '../Class/IVisitorTypeAccess';
 import { IResponse } from '../Class/IResponse';
 import { IResponseImgVerify } from '../Class/IResponseImgVerify';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import * as moment from 'moment/moment';
+import { IEmpRes } from '../Class/IEmpRes';
+
 @Component({
   selector: 'app-security',
   templateUrl: './security.component.html',
@@ -156,7 +157,7 @@ export class SecurityComponent implements OnInit {
   getEmployeeDetails() {
     if (this.newVisitor.enteredEmpId) {
       this.ngxLoader.start();
-      this.securityService.fetchEmployeeDetails(this.newVisitor.enteredEmpId).subscribe((empRes) => {
+      this.securityService.fetchEmployeeDetails(this.newVisitor.enteredEmpId).subscribe((empRes: IEmpRes) => {
         console.log(empRes);
         this.newVisitor.name = empRes.name;
         this.newVisitor.email = empRes.email;
