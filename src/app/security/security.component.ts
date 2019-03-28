@@ -244,13 +244,15 @@ export class SecurityComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      // console.log(result);
+      console.log(result);
       this.webCamPic = result;
-      const filePayload = {
-        image: result
-      };
-      console.log(filePayload)
-      this.getVerifiedImage(filePayload);
+      if (result) {
+        const filePayload = {
+          image: result
+        };
+        console.log(filePayload)
+        this.getVerifiedImage(filePayload);
+      }
     });
   }
 }
