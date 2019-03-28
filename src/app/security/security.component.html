@@ -117,6 +117,8 @@
           <!-- </tbody> -->
         </table>
         <br>
+        <!-- <button type="button" (click)="openDialog()">Click</button> -->
+
         <!-- <p><img src="assets/images/add.png" class="add-visitor-icon" (click)="addNewVisitor()"><label class="add-visitor-text"
               (click)="addNewVisitor()">&nbsp;Add Visitor</label></p> -->
 
@@ -148,9 +150,11 @@
       <!-- <mat-form-field> -->
     <label for=file>
       <span>
-        <img class="visitor-img-upload" src="assets/images/visitor-img.png" alt="visitor_img">
+        <img class="visitor-img-upload" src="assets/images/visitor-img.png" alt="visitor_img" (click)="openDialog()">
         <span class="click-to-upload">Click to upload</span>
-        <input type="file" name="fileTest" id="file" class="inputfile" accept="image/png, image/jpeg" (change)="uploadImage($event)"></span>
+          <!-- <input type="file" name="fileTest" id="file" class="inputfile" accept="image/png, image/jpeg" (change)="uploadImage($event)"> -->
+
+        </span>
       </label>
       <mat-error *ngIf="photoUploadError" style="font-size: x-small; ">{{getPhotoErrorMessage()}}</mat-error>
     <!-- </mat-form-field> -->

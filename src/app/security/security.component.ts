@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormControl, Validators } from '@angular/forms';
 
@@ -11,6 +11,8 @@ import { IResponse } from '../Class/IResponse';
 import { IResponseImgVerify } from '../Class/IResponseImgVerify';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { IEmpRes } from '../Class/IEmpRes';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-security',
@@ -35,11 +37,13 @@ export class SecurityComponent implements OnInit {
   selectedAccessType = '';
   isVisitorEmployee = false;
   isEmployeeDetailsFetched = false;
+  webCamPic: any;
 
   constructor(private securityService: SecurityService,
               private storageService: StorageService,
               private sanitizer: DomSanitizer,
-              private ngxLoader: NgxUiLoaderService) { }
+              private ngxLoader: NgxUiLoaderService,
+              public dialog: MatDialog) { }
 
   ngOnInit() {
     // console.log(this.photo);
@@ -61,7 +65,7 @@ export class SecurityComponent implements OnInit {
   addDate(dateType, event) {
     console.log(typeof (event.value));
     const time = event.value;
-    // console.log(time.format('YYYY-MM-DD HH:mm:ss'));
+    console.log(time.format('YYYY-MM-DD HH:mm:ss'));
     this.newVisitor[dateType] = time.format('YYYY-MM-DD HH:mm:ss');
   }
 
@@ -74,12 +78,7 @@ export class SecurityComponent implements OnInit {
 
   validateFile(file) {
     this.photoUploadError = false;
-    // let self = this;
-    // self.showSpinner = true;
-    // let file = (<HTMLInputElement>document.getElementById('visitorImage')).files[0];
     console.log('start loader');
-    this.ngxLoader.start();
-    // console.log('index: ' + index);
 
     const fileReader = new FileReader();
     fileReader.readAsDataURL(file);
@@ -92,24 +91,28 @@ export class SecurityComponent implements OnInit {
       const filePayload = {
         image: fileBase64
       };
-
-      this.securityService.validateImageBase64(filePayload)
-        .subscribe((response: IResponseImgVerify) => {
-          console.log(response);
-          // this.photoId = response['image_id'];
-          // self.showSpinner = false;
-          this.newVisitor.photoId = response.image_id;
-          this.newVisitor.photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + response.image_text);
-          // alert('Image Validation successful');
-          console.log('Image Validation successful');
-          this.ngxLoader.stop();
-        }, (httpError) => {
-          console.log(httpError.error);
-          // self.showSpinner = false;
-          this.ngxLoader.stop();
-          alert(httpError.error.error);
-        });
+      this.getVerifiedImage(filePayload);
     };
+  }
+
+  getVerifiedImage(filePayload) {
+    this.ngxLoader.start();
+    this.securityService.validateImageBase64(filePayload)
+      .subscribe((response: IResponseImgVerify) => {
+        console.log(response);
+        // this.photoId = response['image_id'];
+        // self.showSpinner = false;
+        this.newVisitor.photoId = response.image_id;
+        this.newVisitor.photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + response.image_text);
+        // alert('Image Validation successful');
+        console.log('Image Validation successful');
+        this.ngxLoader.stop();
+      }, (httpError) => {
+        console.log(httpError.error);
+        // self.showSpinner = false;
+        this.ngxLoader.stop();
+        alert(httpError.error.error);
+    });
   }
 
   submitRequest() {
@@ -167,7 +170,7 @@ export class SecurityComponent implements OnInit {
           this.newVisitor.mobile = empRes.mobile;
           this.newVisitor.photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + empRes.photo);
           this.newVisitor.photoId = empRes.photoId;
-          this.newVisitor.inTime = new Date();
+          this.newVisitor.inTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
           this.name.setValue(empRes.name);
           this.email.setValue(empRes.email);
@@ -231,5 +234,62 @@ export class SecurityComponent implements OnInit {
 
   initializeVisitor() {
     this.newVisitor = new Visitor();
+  }
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '600px',
+      height: '576px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      // console.log(result);
+      this.webCamPic = result;
+      const filePayload = {
+        image: result
+      };
+      console.log(filePayload)
+      this.getVerifiedImage(filePayload);
+    });
+  }
+}
+
+
+import {Observable, Subject} from 'rxjs';
+
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog-overview-example-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+  webcamImage = null;
+  private trigger: Subject<void> = new Subject<void>();
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  onTakePhotoClick() {
+    this.trigger.next();
+  }
+
+  handleImage(webcamImage) {
+    console.log('received webcam image', webcamImage);
+    // console.log(webcamImage)
+    this.webcamImage = webcamImage;
+    this.data.webCamPic = webcamImage;
+    this.dialogRef.close(webcamImage.imageAsBase64);
+  }
+  public triggerSnapshot(): void {
+    this.trigger.next();
+  }
+
+  public get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
   }
 }
