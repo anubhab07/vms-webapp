@@ -154,14 +154,13 @@ export class EmployeeComponent implements OnInit {
     this.empService.requestVisitorAccess(visitorPayloadLst)
       .subscribe((response: IResponse) => {
         if (response.status === 1) {
-          alert(response.data[0].message);
+          this.initializeVisitorLst();
         }
+        alert(response.data[0].message);
         console.log(response);
         // this.imageSource = this._sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'
         // + response['data']['Photo']);
         this.ngxLoader.stop();
-        this.initializeVisitorLst();
-        // alert(response.message);
       }, error => {
         this.ngxLoader.stop();
         alert('Sorry some error occured');

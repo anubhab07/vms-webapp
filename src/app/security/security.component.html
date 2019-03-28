@@ -65,12 +65,12 @@
                   <mat-error *ngIf="name.invalid">{{getNameErrorMessage()}}</mat-error>
               </mat-form-field>
             </td>
-            <td class="visitor-detail" *ngIf="!isVisitorEmployee">
+            <td class="visitor-detail">
               <mat-form-field>
-                <input matInput placeholder="Reffered By" type="number" [formControl]="reffered" name="reffered" (change)="addData('reffered', $event)" [value]="newVisitor.reffered"  [disabled]="isVisitorEmployee"
+                <input matInput placeholder="Reffered By" type="number" [formControl]="reffered" name="reffered" (change)="addData('reffered', $event)" [value]="newVisitor.reffered"  
                    required>
                    <mat-error *ngIf="reffered.invalid">{{getRefferedErrorMessage()}}</mat-error>
-              </mat-form-field>{{isVisitorEmployee}}
+              </mat-form-field>
             </td>
             <td class="visitor-detail">
               <mat-form-field>

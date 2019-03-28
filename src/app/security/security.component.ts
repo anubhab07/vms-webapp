@@ -113,7 +113,8 @@ export class SecurityComponent implements OnInit {
   }
 
   submitRequest() {
-    if (this.email.valid && this.mobile.valid && this.name.valid && this.reffered.valid && this.inTime.valid && this.outTime.valid && !this.photoUploadError) {
+    // console.log(this.email.valid , this.mobile.valid , this.name.valid , this.reffered.value , this.inTime.valid , this.outTime.valid , !this.photoUploadError);
+    if (this.email.valid && this.mobile.valid && this.name.valid && this.reffered.value && this.inTime.valid && this.outTime.valid && !this.photoUploadError) {
       const visitorPayloadLst = [];
       this.ngxLoader.start();
       const visitorPayload = {
@@ -133,13 +134,14 @@ export class SecurityComponent implements OnInit {
         .subscribe((response: IResponse) => {
           if (response.status === 1) {
             alert(response.data[0].message);
+            this.initializeVisitor();
+          } else {
+            alert(response.message);
           }
           console.log(response);
           // this.imageSource = this._sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'
           // + response['data']['Photo']);
           this.ngxLoader.stop();
-          this.initializeVisitor();
-          // alert(response.message);
         }, error => {
           this.ngxLoader.stop();
           alert('Sorry some error occured');
@@ -151,7 +153,7 @@ export class SecurityComponent implements OnInit {
   }
 
   empIdEntered(event) {
-    console.log(event);
+    // console.log(event);
     this.newVisitor.enteredEmpId = event.target.value;
   }
   getEmployeeDetails() {
@@ -159,16 +161,27 @@ export class SecurityComponent implements OnInit {
       this.ngxLoader.start();
       this.securityService.fetchEmployeeDetails(this.newVisitor.enteredEmpId).subscribe((empRes: IEmpRes) => {
         console.log(empRes);
-        this.newVisitor.name = empRes.name;
-        this.newVisitor.email = empRes.email;
-        this.newVisitor.mobile = empRes.mobile;
+        if (this.accessType.value === 'EMPLOYEE') {
+          this.newVisitor.name = empRes.name;
+          this.newVisitor.email = empRes.email;
+          this.newVisitor.mobile = empRes.mobile;
+          this.newVisitor.photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + empRes.photo);
+          this.newVisitor.photoId = empRes.photoId;
+          this.newVisitor.inTime = new Date();
+
+          this.name.setValue(empRes.name);
+          this.email.setValue(empRes.email);
+          this.mobile.setValue(empRes.mobile);
+          this.photo.setValue(this.newVisitor.photo);
+          this.inTime.setValue(this.newVisitor.inTime);
+        }
         this.newVisitor.reffered = empRes.empId;
-        this.newVisitor.photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + empRes.photo);
-        this.newVisitor.photoId = empRes.photoId;
-        this.newVisitor.inTime = new Date();
+        this.reffered.setValue(empRes.empId);
+
         this.ngxLoader.stop();
         this.isEmployeeDetailsFetched = true;
       }, error => {
+        alert(error.message);
         this.isEmployeeDetailsFetched = false;
         this.ngxLoader.stop();
       });
@@ -181,9 +194,11 @@ export class SecurityComponent implements OnInit {
     if (vType === 'EMPLOYEE' || vType === 'FAMILY') {
       this.isVisitorEmployee = true;
       this.isEmployeeDetailsFetched = false;
+      this.reffered.disable();
     } else {
       this.isVisitorEmployee = false;
       this.isEmployeeDetailsFetched  = true;
+      this.reffered.enable();
     }
   }
 
